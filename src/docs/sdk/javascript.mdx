@@ -1,0 +1,290 @@
+---
+title: JavaScript/TypeScript SDK
+description: Official OpenRouter client for JavaScript and TypeScript
+---
+
+# JavaScript/TypeScript SDK
+
+Our official JavaScript/TypeScript client library makes it easy to integrate OpenRouter into your JavaScript or TypeScript applications.
+
+## Installation
+
+Install the package from npm:
+
+```bash
+# Using npm
+npm install openrouter
+
+# Using yarn
+yarn add openrouter
+
+# Using pnpm
+pnpm add openrouter
+```
+
+## Basic Usage
+
+### Setting Up the Client
+
+```javascript
+import { OpenRouter } from 'openrouter';
+
+// Initialize the client
+const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY, // Use environment variable for the API key
+});
+```
+
+### Making a Simple Request
+
+```javascript
+async function generateCompletion() {
+  try {
+    const response = await openrouter.chat.completions.create({
+      model: 'anthropic/claude-3-sonnet',
+      messages: [
+        { role: 'user', content: 'Write a short poem about artificial intelligence.' }
+      ]
+    });
+    
+    console.log(response.choices[0].message.content);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+generateCompletion();
+```
+
+### Using Streaming
+
+```javascript
+async function streamCompletion() {
+  try {
+    const stream = await openrouter.chat.completions.create({
+      model: 'openai/gpt-4o',
+      messages: [
+        { role: 'user', content: 'Explain the theory of relativity step by step.' }
+      ],
+      stream: true
+    });
+    
+    for await (const chunk of stream) {
+      process.stdout.write(chunk.choices[0]?.delta?.content || '');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+streamCompletion();
+```
+
+## Advanced Usage
+
+### Model Fallbacks
+
+```javascript
+const response = await openrouter.chat.completions.create({
+  route: 'fallback',
+  model: 'anthropic/claude-3-opus',
+  fallbacks: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+  messages: [
+    { role: 'user', content: 'Explain quantum computing.' }
+  ]
+});
+```
+
+### Cost Optimization
+
+```javascript
+const response = await openrouter.chat.completions.create({
+  route: 'lowest-cost',
+  models: [
+    'anthropic/claude-3-opus', 
+    'openai/gpt-4-turbo', 
+    'anthropic/claude-3-sonnet'
+  ],
+  messages: [
+    { role: 'user', content: 'Generate 10 creative business name ideas for a bakery.' }
+  ]
+});
+```
+
+### Performance Optimization
+
+```javascript
+const response = await openrouter.chat.completions.create({
+  route: 'fastest',
+  models: [
+    'anthropic/claude-3-haiku', 
+    'openai/gpt-3.5-turbo', 
+    'google/gemini-1.5-flash'
+  ],
+  messages: [
+    { role: 'user', content: 'Summarize this article in three sentences.' }
+  ]
+});
+```
+
+## TypeScript Support
+
+Our SDK is written in TypeScript and provides full type definitions:
+
+```typescript
+import { OpenRouter, ChatCompletionCreateParams } from 'openrouter';
+
+const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+const params: ChatCompletionCreateParams = {
+  model: 'anthropic/claude-3-sonnet',
+  messages: [
+    { role: 'user', content: 'Hello, how are you?' }
+  ],
+  temperature: 0.7,
+  max_tokens: 1000
+};
+
+async function callAPI() {
+  const response = await openrouter.chat.completions.create(params);
+  return response;
+}
+```
+
+## Error Handling
+
+```typescript
+async function handleErrors() {
+  try {
+    const response = await openrouter.chat.completions.create({
+      model: 'anthropic/claude-3-opus',
+      messages: [
+        { role: 'user', content: 'Write a story about AI.' }
+      ]
+    });
+    
+    return response;
+  } catch (error) {
+    if (error.status === 401) {
+      console.error('Authentication error: Check your API key');
+    } else if (error.status === 429) {
+      console.error('Rate limit exceeded: Please slow down your requests');
+    } else if (error.status === 500) {
+      console.error('Server error: Please try again later');
+    } else {
+      console.error('Error:', error.message);
+    }
+    
+    // Implement retry logic, fallbacks, etc.
+    return null;
+  }
+}
+```
+
+## Environment-specific Usage
+
+### Node.js
+
+When using the SDK in a Node.js environment, ensure you've set your API key as an environment variable:
+
+```javascript
+// Using dotenv to load environment variables
+require('dotenv').config();
+
+const { OpenRouter } = require('openrouter');
+const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+```
+
+### Browser
+
+For browser environments, avoid exposing your API key in frontend code. Instead:
+
+1. Set up a backend service that makes API calls to OpenRouter
+2. Create API endpoints that your frontend can call
+3. Keep your API key secure on your server
+
+## Examples
+
+### Express.js Backend
+
+```javascript
+const express = require('express');
+const { OpenRouter } = require('openrouter');
+require('dotenv').config();
+
+const app = express();
+app.use(express.json());
+
+const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+app.post('/api/generate', async (req, res) => {
+  try {
+    const { prompt, model = 'anthropic/claude-3-sonnet' } = req.body;
+    
+    const response = await openrouter.chat.completions.create({
+      model,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    
+    res.json({ 
+      text: response.choices[0].message.content,
+      model: response.model
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+### Next.js API Route
+
+```javascript
+// pages/api/generate.js
+import { OpenRouter } from 'openrouter';
+
+const openrouter = new OpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+  
+  try {
+    const { prompt, model = 'anthropic/claude-3-sonnet' } = req.body;
+    
+    const response = await openrouter.chat.completions.create({
+      model,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    
+    res.status(200).json({ 
+      text: response.choices[0].message.content,
+      model: response.model
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+```
+
+## API Reference
+
+For a complete list of parameters and options, please refer to our [API Reference](/docs/api) documentation.
+
+## Next Steps
+
+- Check out our [Quick Start Guide](/docs/quick-start) to get familiar with the OpenRouter API
+- Learn about [Model Selection](/docs/guides/model-selection) to choose the right model for your use case
+- Explore [Fallbacks & Routing](/docs/guides/fallbacks-routing) for creating resilient applications

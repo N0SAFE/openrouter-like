@@ -1,0 +1,181 @@
+---
+title: Versioning Policy
+description: Understanding OpenRouter's API versioning approach and stability guarantees
+---
+
+# API Versioning Policy
+
+OpenRouter follows a structured versioning policy designed to provide stability for your applications while allowing our platform to evolve. This document outlines how we version our API and what changes you can expect.
+
+## Version Structure
+
+The OpenRouter API uses a simple major version scheme:
+
+```
+https://api.openrouter.ai/v1/chat/completions
+```
+
+The `v1` in the URL represents the major version of the API.
+
+## Versioning Principles
+
+Our versioning policy follows these key principles:
+
+1. **API Stability**: Once a version is released, we maintain backward compatibility within that version
+2. **Deprecation Notices**: We provide advance notice before deprecating features or versions
+3. **Transition Periods**: We ensure reasonable time for migration between versions
+4. **Semantic Changes**: Breaking changes are only introduced in new major versions
+5. **Documentation**: All versions remain documented even after deprecation begins
+
+## Compatibility Guarantees
+
+### What We Won't Change Within a Version
+
+- Endpoint URLs
+- Required request parameters
+- Response structure for existing fields
+- Authentication methods
+- Error codes and their meanings
+- Data formats (JSON structure)
+
+### What May Change Within a Version
+
+- Adding new optional parameters
+- Adding new response fields
+- Extending enumerations with new values
+- Adding new endpoints
+- Performance improvements
+- Bug fixes that don't change behavior
+
+## Version Lifecycle
+
+Each API version goes through the following lifecycle:
+
+1. **Preview**: Initial release for developer testing, not for production use
+2. **General Availability (GA)**: Stable version suitable for production
+3. **Deprecated**: Version still works but will be removed in the future
+4. **Sunset**: Version is no longer supported
+
+### Lifecycle Timeframes
+
+- **Preview to GA**: Typically 1-3 months
+- **GA to Deprecation**: Minimum 12 months
+- **Deprecation to Sunset**: Minimum 6 months
+
+This gives you at least 18 months from general availability before a version is fully retired.
+
+## Current Version Status
+
+| Version | Status | Release Date | Deprecation Date | Sunset Date |
+|---------|--------|--------------|------------------|-------------|
+| v1      | GA     | Jan 15, 2023 | Not scheduled    | Not scheduled |
+
+## Breaking Change Examples
+
+Examples of changes that would require a new major version:
+
+- Removing a required parameter
+- Changing the structure of core response objects
+- Modifying behavior in ways that break existing clients
+- Removing endpoints
+- Changing authentication mechanisms
+- Altering error response formats
+
+## Migration Process
+
+When a new major version is released, we provide:
+
+1. **Comprehensive Migration Guide**: Step-by-step instructions for updating
+2. **Changelog**: Detailed list of changes between versions
+3. **Migration Tools**: When possible, tools to help test compatibility
+4. **Support Office Hours**: Scheduled sessions with our engineering team
+
+### Migration Example
+
+To migrate from a hypothetical `v1` to `v2`:
+
+```diff
+// Old v1 request
+- POST https://api.openrouter.ai/v1/chat/completions
++ POST https://api.openrouter.ai/v2/chat/completions
+
+// Request body changes
+  {
+    "model": "openai/gpt-4",
+-   "prompt": "Hello, AI!",
++   "messages": [{"role": "user", "content": "Hello, AI!"}],
+    "max_tokens": 100
+  }
+```
+
+## Version Notifications
+
+We notify users about versioning changes through:
+
+1. **Email Notifications**: Sent to account administrators
+2. **Dashboard Alerts**: Displayed in the OpenRouter dashboard
+3. **API Response Headers**: Deprecation warnings included in headers
+4. **Change Log**: Published in our documentation
+5. **Developer Newsletter**: Regular updates on platform changes
+
+## Testing New Versions
+
+You can test upcoming versions before migrating production applications:
+
+### Version Preview
+
+```
+https://api.openrouter.ai/v2-preview/chat/completions
+```
+
+### Request Headers
+
+You can test a new version while still using the current version URL:
+
+```http
+POST /v1/chat/completions HTTP/1.1
+Host: api.openrouter.ai
+X-OpenRouter-Version: v2-preview
+```
+
+## API Lifecycle Events
+
+| Event | Notification Lead Time | Description |
+|-------|------------------------|-------------|
+| New Version Preview | Immediate | New version available for early testing |
+| General Availability | 2 weeks | New version ready for production use |
+| Deprecation Notice | 12 months | Version will be sunset in the future |
+| End-of-Support Warning | 3 months | Final reminder before version sunset |
+| Version Sunset | - | Version no longer accessible |
+
+## Best Practices
+
+1. **Monitor Notifications**: Subscribe to developer updates and monitor dashboard alerts
+2. **Regular Updates**: Plan for regular maintenance windows to update API versions
+3. **Version Pinning**: Explicitly specify the API version in your applications
+4. **Feature Flags**: Implement feature flags to easily toggle between versions
+5. **Test Compatibility**: Regularly test against preview versions to identify issues early
+
+## Backward Compatibility Tools
+
+We provide tools to help ensure backward compatibility:
+
+1. **Version Simulator**: Test your current requests against upcoming versions
+2. **Request Translator**: Automatically translate requests between versions
+3. **Compatibility Reports**: Get reports on potential issues with your usage patterns
+
+## Support for Legacy Versions
+
+After a version is deprecated but before sunset:
+
+1. **Critical Security Issues**: Will still be addressed
+2. **Bug Fixes**: Only critical bugs will be fixed
+3. **Performance**: No further optimizations will be made
+4. **Features**: No new features will be added
+5. **Support**: Limited technical support provided
+
+## Next Steps
+
+- [Review Error Handling](/docs/api/errors) to ensure robust API interactions
+- [Check API Authentication](/docs/api/authentication) for security best practices
+- [Join our Developer Community](/docs/reference/community) to stay updated on API changes

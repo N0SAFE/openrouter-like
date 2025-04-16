@@ -1,0 +1,106 @@
+---
+title: Models Overview
+description: Comprehensive guide to AI models available through OpenRouter
+---
+
+# Models Overview
+
+OpenRouter provides access to a wide range of AI models from leading providers including OpenAI, Anthropic, Google, Meta, and others. This guide helps you understand the available models and how to choose between them.
+
+## Supported Model Providers
+
+OpenRouter currently supports models from the following providers:
+
+- **[OpenAI](/docs/models/openai)** - GPT models including GPT-4o, GPT-4 Turbo, and GPT-3.5 Turbo
+- **[Anthropic](/docs/models/anthropic)** - Claude models including Claude 3 Opus, Sonnet, and Haiku
+- **[Google](/docs/models/google)** - Gemini models including 1.5 Pro and 1.5 Flash
+- **[Open Source](/docs/models/open-source)** - Models like Llama 3 and other open models
+
+## Model Selection Guide
+
+When choosing a model, consider these factors:
+
+### 1. Capabilities
+
+Models differ in their capabilities:
+
+| Capability | Best Models |
+|------------|-------------|
+| Complex reasoning | Anthropic Claude 3 Opus, OpenAI GPT-4o |
+| Creative writing | OpenAI GPT-4o, Anthropic Claude 3 Sonnet |
+| Code generation | OpenAI GPT-4o, Anthropic Claude 3 Opus |
+| Factual accuracy | Anthropic Claude 3 Opus, Google Gemini 1.5 Pro |
+| Speed (low latency) | OpenAI GPT-3.5 Turbo, Anthropic Claude 3 Haiku |
+
+### 2. Context Window
+
+Models support different maximum input sizes:
+
+| Model | Context Window |
+|-------|---------------|
+| Anthropic Claude 3 Opus | 200,000 tokens |
+| Google Gemini 1.5 Pro | 1,000,000 tokens |
+| OpenAI GPT-4o | 128,000 tokens |
+| OpenAI GPT-3.5 Turbo | 16,385 tokens |
+
+### 3. Cost
+
+Pricing varies significantly between models:
+
+| Model | Input Cost (per 1M tokens) | Output Cost (per 1M tokens) |
+|-------|----------------------------|----------------------------|
+| Claude 3 Opus | $15 | $75 |
+| GPT-4o | $5 | $15 |
+| Claude 3 Sonnet | $3 | $15 |
+| GPT-3.5 Turbo | $0.50 | $1.50 |
+| Claude 3 Haiku | $0.25 | $1.25 |
+
+### 4. Availability
+
+Some models may have higher availability than others. OpenRouter provides automatic fallbacks to ensure your application remains operational even if a specific model is unavailable.
+
+## Model Specifiers
+
+When making API requests, specify your chosen model using the format:
+
+```
+provider/model-name
+```
+
+For example:
+- `anthropic/claude-3-opus`
+- `openai/gpt-4o`
+- `google/gemini-1.5-pro`
+- `meta-llama/llama-3-70b-instruct`
+
+## Model Parameters
+
+Different models support different parameters:
+
+| Parameter | Support |
+|-----------|---------|
+| temperature | All models |
+| max_tokens | All models |
+| stop sequences | Most models |
+| function calling | OpenAI models, Claude 3 |
+| JSON mode | OpenAI models, Claude 3 |
+
+Check provider-specific documentation for details on supported parameters.
+
+## Recommended Use Cases
+
+| Use Case | Recommended Models |
+|----------|-------------------|
+| Customer support | Claude 3 Sonnet, GPT-3.5 Turbo |
+| Content generation | GPT-4o, Claude 3 Opus |
+| Data analysis | Claude 3 Opus, GPT-4o |
+| Code assistance | GPT-4o, Claude 3 Opus |
+| Education | Claude 3 Sonnet, Gemini 1.5 Pro |
+| Document processing | Claude 3 Opus (large context), Gemini 1.5 Pro |
+
+## Next Steps
+
+- [OpenAI Models](/docs/models/openai)
+- [Anthropic Models](/docs/models/anthropic)
+- [Google Models](/docs/models/google)
+- [Open Source Models](/docs/models/open-source)

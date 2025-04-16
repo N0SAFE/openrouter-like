@@ -1,0 +1,238 @@
+---
+title: System Prompts
+description: How to use system prompts to control AI model behavior
+---
+
+# System Prompts
+
+System prompts are powerful instructions that guide the overall behavior, tone, and capabilities of AI models. Unlike user prompts that contain specific queries or content, system prompts establish the framework for how the AI should operate throughout the conversation.
+
+## What Are System Prompts?
+
+A system prompt is a special instruction sent with your API request that sets the context for the AI model's operation. System prompts effectively tell the model "how to be" rather than asking it to perform a specific task.
+
+When sending requests to the OpenRouter API, system prompts are included in the `messages` array with the role set to `system`:
+
+```json
+{
+  "model": "anthropic/claude-3-opus",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful technical assistant specializing in Python programming. Provide code examples with explanations. Be concise and focus on best practices."
+    },
+    {
+      "role": "user",
+      "content": "How do I read a CSV file in Python?"
+    }
+  ]
+}
+```
+
+## Key Benefits of System Prompts
+
+- **Consistent Behavior**: Ensures the model maintains a consistent persona or approach
+- **Specialized Knowledge**: Focuses the model on specific domains or topics
+- **Output Formatting**: Controls how responses are structured or formatted
+- **Safety Guardrails**: Establishes boundaries for what the model should or shouldn't do
+- **Performance Optimization**: Focuses the model's capabilities on your specific needs
+
+## Effective System Prompt Design
+
+### Components of a Good System Prompt
+
+1. **Role Definition**: Clearly define the AI's role or persona
+2. **Knowledge Boundaries**: Specify what knowledge domains the AI should focus on
+3. **Response Style**: Describe the tone, style, and format of responses
+4. **Constraints**: Set limitations on what the AI should not do
+5. **Interaction Pattern**: Establish how the AI should handle different user inputs
+
+### Basic Template
+
+```
+You are a [ROLE] who [KEY CHARACTERISTICS]. 
+Your task is to [PRIMARY FUNCTION].
+Always [REQUIRED BEHAVIOR].
+Never [PROHIBITED BEHAVIOR].
+Respond in [FORMAT/STYLE].
+```
+
+### Example System Prompts
+
+#### Customer Support Assistant
+
+```
+You are a customer support specialist for OpenRouter, an AI model routing service. 
+You're knowledgeable about our API, pricing plans, and technical integration.
+Your task is to help users solve problems with their OpenRouter implementation.
+Always be friendly, patient, and provide actionable next steps.
+Never share information about internal systems or make promises about future features.
+When technical issues are complex, guide users to our documentation or suggest opening a support ticket.
+```
+
+#### Technical Documentation Writer
+
+```
+You are a technical documentation writer specializing in API integration guides.
+Your task is to explain technical concepts clearly with precise, accurate information.
+Always include relevant code examples in your explanations.
+Always use proper formatting for code blocks, parameters, and responses.
+Never use unnecessary jargon or assume advanced knowledge without explanation.
+Respond in a structured format with headings, bullet points, and code examples as appropriate.
+```
+
+## System Prompts By Model Provider
+
+Different AI providers handle system prompts with slight variations:
+
+### OpenAI Models
+
+OpenAI models treat the system prompt as clear instructions for how the assistant should behave. These models strongly adhere to well-formatted system instructions.
+
+Best practices:
+- Be explicit about the assistant's role
+- Use clear, direct instructions
+- Separate different instructions with line breaks for clarity
+
+### Anthropic Claude Models
+
+Claude models respond well to system prompts but may sometimes blend them more with the conversation context.
+
+Best practices:
+- Use "You are" statements to define role clearly
+- Emphasize important constraints with phrases like "Important:" or "Note:"
+- Be specific about output format requirements
+
+### Google Gemini Models
+
+Gemini models generally follow system instructions but may require more specific formatting guidance.
+
+Best practices:
+- Be explicit about formatting requirements
+- Use numbered lists for multi-step instructions
+- Clearly separate different aspects of the role
+
+## Advanced System Prompt Techniques
+
+### Chain-of-Thought Guidance
+
+Instructing the model to think through problems step-by-step:
+
+```
+You are a problem-solving assistant.
+When faced with complex questions, always break down your thinking as follows:
+1. Identify the key components of the problem
+2. List any relevant formulas or approaches
+3. Work through the solution step by step
+4. Verify your answer and check for errors
+5. Provide the final answer clearly marked at the end
+```
+
+### Output Structuring
+
+Controlling the format of the model's responses:
+
+```
+You are a data analysis assistant.
+Always present your findings in the following structure:
+- Summary: A brief 1-2 sentence overview of key findings
+- Data Insights: Bulletpoints of the most important patterns
+- Visualizations: Suggest appropriate chart types for the data
+- Recommendations: Actionable next steps based on the analysis
+- Limitations: Note any constraints or caveats about your analysis
+```
+
+### Specialized Knowledge Activation
+
+Focusing the model on specific domain knowledge:
+
+```
+You are a pharmaceutical research assistant with expert knowledge in drug interactions.
+You understand pharmacokinetics, metabolism pathways, and contraindications.
+When discussing medications, always consider:
+- Primary mechanism of action
+- Common interaction pathways
+- Patient risk factors
+- Alternative treatment options
+```
+
+## Optimizing System Prompts
+
+### Length Considerations
+
+While system prompts can be detailed, there are trade-offs to consider:
+
+- **Shorter prompts** (50-100 words): Lower token usage, faster processing, but may lack nuance
+- **Medium prompts** (100-300 words): Good balance of detail and efficiency for most use cases
+- **Longer prompts** (300+ words): Higher token consumption but can provide very specific guidance
+
+### Testing and Iteration
+
+Effective system prompts often require testing and refinement:
+
+1. Start with a basic version
+2. Test with various user inputs
+3. Identify areas where the model's behavior doesn't match expectations
+4. Refine the system prompt to address those gaps
+5. Repeat the process until performance is satisfactory
+
+### Version Control
+
+Maintain a library of effective system prompts with version tracking:
+
+```
+System Prompt: Technical Support v2.3
+Last Updated: 2023-06-15
+Changes: Added specific instructions for handling API authentication questions
+Performance: 92% accuracy on test cases
+```
+
+## Common Pitfalls
+
+1. **Contradictory Instructions**: Giving conflicting guidance that confuses the model
+2. **Excessive Constraints**: Over-restricting the model can lead to stilted or limited responses
+3. **Vague Guidance**: Instructions that are too general to effectively guide behavior
+4. **Prompt Leakage**: Including confidential information that might be revealed to users
+5. **Overriding Core Safety**: Attempting to remove essential safety protocols
+
+## System Prompt Examples by Use Case
+
+### Content Creation
+
+```
+You are a content writer creating engaging blog posts about technology.
+Write in a conversational, approachable style while demonstrating expertise.
+Include relevant examples, analogies, and practical applications.
+Structure content with clear headings, short paragraphs, and occasional questions to engage the reader.
+Optimize content for readability with bullet points for lists and bold text for key concepts.
+```
+
+### Code Generation
+
+```
+You are an expert software developer specialized in clean, maintainable code.
+When writing code, always:
+- Include clear comments explaining complex logic
+- Follow language-specific best practices and conventions
+- Consider edge cases and error handling
+- Provide brief explanations of your implementation choices
+- Ensure the solution is efficient and scalable
+Your code should be production-ready and follow modern development standards.
+```
+
+### Educational Assistant
+
+```
+You are an educational assistant specialized in breaking down complex topics.
+Adapt your explanations to different knowledge levels (beginner, intermediate, advanced).
+Use the Feynman technique: explain concepts in simple terms without jargon.
+Include analogies and real-world examples to illustrate abstract concepts.
+Ask periodic comprehension questions to check understanding.
+When providing explanations, structure them from foundational concepts to more complex applications.
+```
+
+## Next Steps
+
+- [Explore Prompt Engineering](/docs/guides/prompt-engineering) for more general prompting techniques
+- [Learn about Few-shot Learning](/docs/guides/few-shot-learning) to enhance model performance with examples
+- [See System Prompt examples](/docs/guides/ai-assistants) in the context of building AI assistants

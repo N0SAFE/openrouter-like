@@ -1,0 +1,339 @@
+---
+title: Python SDK
+description: Official OpenRouter client for Python
+---
+
+# Python SDK
+
+Our official Python client library makes it easy to integrate OpenRouter into your Python applications, scripts, and services.
+
+## Installation
+
+Install the package using pip:
+
+```bash
+pip install openrouter
+```
+
+Or with poetry:
+
+```bash
+poetry add openrouter
+```
+
+## Basic Usage
+
+### Setting Up the Client
+
+```python
+from openrouter import OpenRouter
+import os
+
+# Initialize the client
+openrouter = OpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+```
+
+### Making a Simple Request
+
+```python
+def generate_completion():
+    try:
+        response = openrouter.chat.completions.create(
+            model="anthropic/claude-3-sonnet",
+            messages=[
+                {"role": "user", "content": "Write a short poem about artificial intelligence."}
+            ]
+        )
+        
+        print(response.choices[0].message.content)
+    except Exception as e:
+        print(f"Error: {e}")
+
+generate_completion()
+```
+
+### Using Streaming
+
+```python
+def stream_completion():
+    try:
+        stream = openrouter.chat.completions.create(
+            model="openai/gpt-4o",
+            messages=[
+                {"role": "user", "content": "Explain the theory of relativity step by step."}
+            ],
+            stream=True
+        )
+        
+        for chunk in stream:
+            content = chunk.choices[0].delta.content
+            if content:
+                print(content, end="", flush=True)
+        print()
+    except Exception as e:
+        print(f"Error: {e}")
+
+stream_completion()
+```
+
+## Advanced Usage
+
+### Model Fallbacks
+
+```python
+response = openrouter.chat.completions.create(
+    route="fallback",
+    model="anthropic/claude-3-opus",
+    fallbacks=["openai/gpt-4o", "google/gemini-1.5-pro"],
+    messages=[
+        {"role": "user", "content": "Explain quantum computing."}
+    ]
+)
+```
+
+### Cost Optimization
+
+```python
+response = openrouter.chat.completions.create(
+    route="lowest-cost",
+    models=[
+        "anthropic/claude-3-opus", 
+        "openai/gpt-4-turbo", 
+        "anthropic/claude-3-sonnet"
+    ],
+    messages=[
+        {"role": "user", "content": "Generate 10 creative business name ideas for a bakery."}
+    ]
+)
+```
+
+### Performance Optimization
+
+```python
+response = openrouter.chat.completions.create(
+    route="fastest",
+    models=[
+        "anthropic/claude-3-haiku", 
+        "openai/gpt-3.5-turbo", 
+        "google/gemini-1.5-flash"
+    ],
+    messages=[
+        {"role": "user", "content": "Summarize this article in three sentences."}
+    ]
+)
+```
+
+## Type Hints
+
+The OpenRouter Python SDK provides comprehensive type hints for better IDE support and code quality:
+
+```python
+from openrouter import OpenRouter
+from openrouter.types import ChatCompletionCreateParams
+from typing import List, Dict, Any
+
+openrouter = OpenRouter(api_key="your-api-key")
+
+params: ChatCompletionCreateParams = {
+    "model": "anthropic/claude-3-sonnet",
+    "messages": [
+        {"role": "user", "content": "Hello, how are you?"}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 1000
+}
+
+def call_api() -> Dict[str, Any]:
+    response = openrouter.chat.completions.create(**params)
+    return response
+```
+
+## Error Handling
+
+```python
+def handle_errors():
+    try:
+        response = openrouter.chat.completions.create(
+            model="anthropic/claude-3-opus",
+            messages=[
+                {"role": "user", "content": "Write a story about AI."}
+            ]
+        )
+        
+        return response
+    except Exception as e:
+        error_message = str(e)
+        
+        if "401" in error_message:
+            print("Authentication error: Check your API key")
+        elif "429" in error_message:
+            print("Rate limit exceeded: Please slow down your requests")
+        elif "500" in error_message:
+            print("Server error: Please try again later")
+        else:
+            print(f"Error: {error_message}")
+        
+        # Implement retry logic, fallbacks, etc.
+        return None
+```
+
+## Integration Examples
+
+### FastAPI Backend
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from openrouter import OpenRouter
+import os
+
+app = FastAPI()
+openrouter = OpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+
+class PromptRequest(BaseModel):
+    prompt: str
+    model: str = "anthropic/claude-3-sonnet"
+
+class CompletionResponse(BaseModel):
+    text: str
+    model: str
+
+@app.post("/api/generate", response_model=CompletionResponse)
+async def generate_text(request: PromptRequest):
+    try:
+        response = openrouter.chat.completions.create(
+            model=request.model,
+            messages=[{"role": "user", "content": request.prompt}]
+        )
+        
+        return CompletionResponse(
+            text=response.choices[0].message.content,
+            model=response.model
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+### Flask Backend
+
+```python
+from flask import Flask, request, jsonify
+from openrouter import OpenRouter
+import os
+
+app = Flask(__name__)
+openrouter = OpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+
+@app.route("/api/generate", methods=["POST"])
+def generate_text():
+    data = request.json
+    prompt = data.get("prompt")
+    model = data.get("model", "anthropic/claude-3-sonnet")
+    
+    if not prompt:
+        return jsonify({"error": "No prompt provided"}), 400
+    
+    try:
+        response = openrouter.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        return jsonify({
+            "text": response.choices[0].message.content,
+            "model": response.model
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+### Django Integration
+
+```python
+# views.py
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+from openrouter import OpenRouter
+import os
+
+openrouter = OpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def generate_text(request):
+    try:
+        data = json.loads(request.body)
+        prompt = data.get("prompt")
+        model = data.get("model", "anthropic/claude-3-sonnet")
+        
+        if not prompt:
+            return JsonResponse({"error": "No prompt provided"}, status=400)
+        
+        response = openrouter.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        return JsonResponse({
+            "text": response.choices[0].message.content,
+            "model": response.model
+        })
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+```
+
+## Async Support
+
+The OpenRouter Python SDK provides async support for use in asynchronous applications:
+
+```python
+import asyncio
+from openrouter import AsyncOpenRouter
+import os
+
+async def main():
+    openrouter = AsyncOpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+    
+    response = await openrouter.chat.completions.create(
+        model="anthropic/claude-3-sonnet",
+        messages=[
+            {"role": "user", "content": "Write a short poem about artificial intelligence."}
+        ]
+    )
+    
+    print(response.choices[0].message.content)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Environment Setup
+
+It's recommended to store your API key in environment variables:
+
+```python
+# Using dotenv to load environment variables
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env file
+
+from openrouter import OpenRouter
+
+openrouter = OpenRouter(api_key=os.environ.get("OPENROUTER_API_KEY"))
+```
+
+## API Reference
+
+For a complete list of parameters and options, please refer to our [API Reference](/docs/api) documentation.
+
+## Next Steps
+
+- Check out our [Quick Start Guide](/docs/quick-start) to get familiar with the OpenRouter API
+- Learn about [Model Selection](/docs/guides/model-selection) to choose the right model for your use case
+- Explore [Fallbacks & Routing](/docs/guides/fallbacks-routing) for creating resilient applications

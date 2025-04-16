@@ -1,0 +1,204 @@
+---
+title: Anthropic Models
+description: Guide to Anthropic Claude models available through OpenRouter
+---
+
+# Anthropic Models
+
+OpenRouter provides access to Anthropic's Claude AI models, which excel at thoughtful dialogue, complex reasoning, and creative content generation. This guide details the Anthropic models available through OpenRouter.
+
+## Available Anthropic Models
+
+| Model ID | Description | Context Window | Strengths |
+|----------|-------------|----------------|-----------|
+| `anthropic/claude-3-opus` | Most powerful Claude model | 200,000 tokens | Complex reasoning, accuracy |
+| `anthropic/claude-3-sonnet` | Balanced performance and speed | 200,000 tokens | Versatility, long context |
+| `anthropic/claude-3-haiku` | Fastest, most compact Claude model | 200,000 tokens | Speed, cost-effectiveness |
+| `anthropic/claude-2` | Previous generation model | 100,000 tokens | Long-form content |
+
+## Claude 3 Opus
+
+Claude 3 Opus is Anthropic's most capable model, designed for tasks requiring deep expertise, complex reasoning, and nuanced understanding.
+
+### Key Features
+
+- **Advanced reasoning** - Excellent at complex logic, mathematics, and analysis
+- **Factual accuracy** - Provides well-researched, accurate responses
+- **Expert knowledge** - Demonstrates expertise across domains
+- **Nuanced understanding** - Excels at interpreting ambiguous or complex requests
+
+### Example Request
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [
+      {role: 'user', content: 'Analyze the economic impacts of transitioning to renewable energy, considering both short-term costs and long-term benefits.'}
+    ],
+    temperature: 0.5,
+    max_tokens: 1000
+  })
+});
+```
+
+### Best Use Cases
+
+- Scientific research analysis
+- Complex problem-solving
+- In-depth analysis of topics
+- High-stakes decision support
+- Professional content creation
+
+## Claude 3 Sonnet
+
+Claude 3 Sonnet offers a balance between performance and speed, suitable for a wide range of applications.
+
+### Key Features
+
+- **Balanced performance** - Good mix of quality and speed
+- **Versatility** - Handles a wide range of tasks effectively
+- **Long context understanding** - Maintains coherence across long conversations
+- **Cost-effective quality** - High-quality responses at a moderate price point
+
+### Best Use Cases
+
+- Content creation and editing
+- Detailed customer support
+- Educational content development
+- Business analysis and reporting
+- General-purpose AI assistant applications
+
+## Claude 3 Haiku
+
+Claude 3 Haiku is Anthropic's fastest and most cost-effective model, designed for applications requiring quick responses.
+
+### Key Features
+
+- **Low latency** - Fastest response times among Claude models
+- **Cost efficiency** - Most affordable Claude model
+- **High throughput** - Handles high-volume applications efficiently
+- **Consistent quality** - Maintains good quality despite smaller size
+
+### Best Use Cases
+
+- Real-time chat applications
+- Customer support triage
+- Content summarization
+- Quick drafting and ideation
+- High-volume applications with budget constraints
+
+## Tool Use and Function Calling
+
+Claude 3 models support a version of function calling through tool use:
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [
+      {role: 'user', content: 'What\'s the weather in Berlin today?'}
+    ],
+    tools: [
+      {
+        name: 'get_weather',
+        description: 'Get the current weather in a location',
+        parameters: {
+          type: 'object',
+          properties: {
+            location: {
+              type: 'string',
+              description: 'The city and country'
+            },
+            unit: {
+              type: 'string',
+              enum: ['celsius', 'fahrenheit'],
+              description: 'The unit of temperature'
+            }
+          },
+          required: ['location']
+        }
+      }
+    ],
+    tool_choice: 'auto'
+  })
+});
+```
+
+## XML Mode
+
+Claude models excel at generating and working with structured formats like XML:
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [
+      {role: 'system', content: 'You generate responses in XML format.'},
+      {role: 'user', content: 'Create a product catalog with 3 items, including name, price, and description.'}
+    ],
+    temperature: 0.7
+  })
+});
+```
+
+## Claude Model Parameters
+
+| Parameter | Description | Valid Range | Default |
+|-----------|-------------|------------|---------|
+| temperature | Controls randomness | 0-1 | 0.7 |
+| max_tokens | Maximum tokens to generate | 1-4096 | Varies by model |
+| top_p | Nucleus sampling parameter | 0-1 | 1 |
+| top_k | Limits token selection | 0-500 | Varies by model |
+
+## System Instructions
+
+Claude models work well with system instructions to define behavior:
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [
+      {role: 'system', content: 'You are a helpful AI assistant specialized in legal research. Provide accurate information and cite relevant cases when applicable.'},
+      {role: 'user', content: 'Explain the concept of fair use in copyright law.'}
+    ],
+    temperature: 0.3
+  })
+});
+```
+
+## Pricing
+
+| Model | Input (per 1M tokens) | Output (per 1M tokens) |
+|-------|------------------------|------------------------|
+| Claude 3 Opus | $15.00 | $75.00 |
+| Claude 3 Sonnet | $3.00 | $15.00 |
+| Claude 3 Haiku | $0.25 | $1.25 |
+| Claude 2 | $8.00 | $24.00 |
+
+## Next Steps
+
+- [Explore OpenAI Models](/docs/models/openai)
+- [Learn about Google's Gemini](/docs/models/google)
+- [Discover Open Source Models](/docs/models/open-source)

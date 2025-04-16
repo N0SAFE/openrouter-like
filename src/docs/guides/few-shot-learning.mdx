@@ -1,0 +1,139 @@
+# Few-shot Learning
+
+Few-shot learning is a powerful technique that allows language models to perform tasks with minimal examples. This guide explains how to effectively implement few-shot learning with our API.
+
+## What is Few-shot Learning?
+
+Few-shot learning refers to the practice of providing a language model with a small number of examples directly in the prompt to guide its responses. Unlike traditional machine learning that requires large training datasets, few-shot learning enables models to understand and adapt to tasks on-the-fly based on just a handful of examples.
+
+## Why Use Few-shot Learning?
+
+- **Quick adaptation** to specific tasks without fine-tuning
+- **Consistent output formatting** for structured responses
+- **Improved accuracy** for domain-specific queries
+- **Task specification** without complex instructions
+
+## Basic Few-shot Pattern
+
+The basic pattern involves:
+
+1. A clear task description
+2. Several examples of input-output pairs
+3. A new input that follows the same pattern
+
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that classifies customer feedback as positive, neutral, or negative."
+    },
+    {
+      "role": "user",
+      "content": "Example 1:\nFeedback: The product arrived damaged and customer service was unhelpful.\nClassification: Negative\n\nExample 2:\nFeedback: Shipping was fast but the quality was just okay.\nClassification: Neutral\n\nExample 3:\nFeedback: I love this product! Will definitely purchase again!\nClassification: Positive\n\nNow classify this feedback:\nFeedback: Delivery was on time and the product works as expected."
+    }
+  ],
+  "model": "anthropic/claude-3-opus"
+}
+```
+
+## Best Practices
+
+### 1. Structure Your Examples Consistently
+
+Format all examples identically, with clear demarcation between input and output. This helps the model understand the pattern to follow.
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Translate English to French:\n\nEnglish: Hello, how are you?\nFrench: Bonjour, comment allez-vous?\n\nEnglish: I would like to order food.\nFrench: Je voudrais commander de la nourriture.\n\nEnglish: Where is the train station?"
+    }
+  ],
+  "model": "openai/gpt-4-turbo"
+}
+```
+
+### 2. Use a Variety of Examples
+
+Include diverse examples that cover different cases and edge conditions to help the model generalize better.
+
+### 3. Order Examples Thoughtfully
+
+For complex tasks, consider ordering examples from simple to complex. This creates a learning progression for the model.
+
+### 4. Include Reasoning Steps for Complex Tasks
+
+For tasks requiring reasoning, show intermediate steps in your examples:
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Solve these word problems step by step:\n\nProblem: If a store sells apples at 3 for $1, how many apples can you buy with $15?\nThinking: At 3 apples for $1, the price per apple is $1/3. With $15, I can buy $15 ÷ ($1/3) = $15 × 3 = 45 apples.\nAnswer: 45 apples\n\nProblem: A train travels at 60 mph. How far does it go in 2.5 hours?\nThinking: Distance = speed × time. So distance = 60 mph × 2.5 hours = 150 miles.\nAnswer: 150 miles\n\nProblem: If a rectangle has a length of 12 cm and a width of 8 cm, what is its area?"
+    }
+  ],
+  "model": "google/gemini-1.5-pro-latest"
+}
+```
+
+## Advanced Techniques
+
+### Chain-of-Thought Prompting
+
+For complex reasoning tasks, demonstrate the thinking process step-by-step:
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Q: If John has 5 apples and gives 2 to Mary, then buys 3 more, how many apples does John have?\nA: Let's solve this step by step. John starts with 5 apples. After giving 2 to Mary, he has 5-2=3 apples. Then he buys 3 more, so now he has 3+3=6 apples.\n\nQ: If a shirt costs $25 with a 20% discount, what is the final price?\nA: Let's solve this step by step. A 20% discount means the customer pays 80% of the original price. 80% of $25 is 0.8 × $25 = $20.\n\nQ: A train travels at 80 km/h. How far does it travel in 1.5 hours?"
+    }
+  ],
+  "model": "anthropic/claude-3-sonnet"
+}
+```
+
+### Few-shot with JSON Templates
+
+When you need output in a specific JSON format:
+
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "Extract product information and return it in JSON format."
+    },
+    {
+      "role": "user",
+      "content": "Example 1:\nInput: I love the new XPhone 15 with its 6.5-inch screen and 128GB storage for $999.\nOutput: { \"product\": \"XPhone 15\", \"features\": [\"6.5-inch screen\", \"128GB storage\"], \"price\": 999 }\n\nExample 2:\nInput: The UltraBook Air laptop weighs only 2.5 pounds and has 16GB RAM with 1TB SSD.\nOutput: { \"product\": \"UltraBook Air\", \"features\": [\"2.5 pounds\", \"16GB RAM\", \"1TB SSD\"], \"price\": null }\n\nNow extract information from this:\nInput: The GameStation 5 Pro comes with an advanced controller and 1TB storage for $499."
+    }
+  ],
+  "model": "openai/gpt-4o"
+}
+```
+
+## Model-Specific Considerations
+
+Different models respond differently to few-shot examples. Generally:
+
+- **Claude models** (Anthropic) often perform well with detailed examples and logical reasoning patterns
+- **GPT-4 models** (OpenAI) excel at following complex patterns established in few-shot examples
+- **Gemini models** (Google) perform particularly well when examples demonstrate the desired reasoning process
+
+## Common Pitfalls
+
+1. **Too many examples**: Adding too many examples can lead to token waste and sometimes confusion. Start with 2-3 quality examples.
+2. **Inconsistent formatting**: Ensure a consistent format across all examples.
+3. **Insufficient variety**: Examples that are too similar may not help the model generalize.
+4. **Ambiguous examples**: Make sure your examples clearly demonstrate the task.
+
+## Conclusion
+
+Few-shot learning is one of the most practical tools for getting reliable, well-formatted responses from language models. By effectively demonstrating what you want through examples, you can achieve impressive results without complex coding or fine-tuning.
+
+For tasks requiring even more precision, consider combining few-shot learning with system instructions and function calling capabilities.

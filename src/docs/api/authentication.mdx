@@ -1,0 +1,84 @@
+---
+title: Authentication
+description: How to authenticate with the OpenRouter API
+---
+
+# Authentication
+
+All requests to the OpenRouter API require authentication using your API key. This guide explains how to authenticate your requests.
+
+## API Key Authentication
+
+Authentication with OpenRouter is done using Bearer token authentication in the HTTP Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Example Request with Authentication
+
+Here's a complete example of an authenticated request to the chat completions endpoint:
+
+```bash
+curl https://api.openrouter.ai/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "HTTP-Referer: https://your-app-or-website.com" \
+  -d '{
+    "model": "anthropic/claude-3-opus",
+    "messages": [
+      {"role": "user", "content": "What is the capital of France?"}
+    ]
+  }'
+```
+
+## Required Headers
+
+In addition to the Authorization header, OpenRouter requires:
+
+- `Content-Type: application/json` - For requests with a JSON body
+- `HTTP-Referer: https://your-app-or-website.com` - Your app's URL (helps with analytics and abuse prevention)
+
+## Authentication Best Practices
+
+### Keep Your API Key Secure
+
+- Never expose your API key in client-side code or public repositories
+- Store API keys in environment variables, not in your code
+- Use different API keys for development and production environments
+
+### Server-Side Requests
+
+For security reasons, make API requests to OpenRouter from your backend server, not directly from client-side applications.
+
+```javascript
+// Example Node.js server-side request
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json',
+    'HTTP-Referer': 'https://your-app.com'
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [{ role: 'user', content: 'Hello!' }]
+  })
+});
+```
+
+## Authentication Errors
+
+If authentication fails, you'll receive one of these error responses:
+
+| Status Code | Description | Solution |
+|-------------|-------------|----------|
+| 401 Unauthorized | Missing API key | Include your API key in the Authorization header |
+| 403 Forbidden | Invalid API key | Check that your API key is correct and active |
+| 429 Too Many Requests | Rate limit exceeded | Reduce request frequency or upgrade your plan |
+
+## Next Steps
+
+- [Chat Completion API](/docs/api/chat-completion)
+- [Models API](/docs/api/models)
+- [Error Handling](/docs/api/errors)

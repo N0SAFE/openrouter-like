@@ -1,0 +1,269 @@
+---
+title: Function Calling
+description: How to use OpenRouter's function calling capability to integrate AI with your APIs and tools
+---
+
+# Function Calling
+
+Function calling allows you to define functions that language models can call, enabling the AI to interact with external systems, retrieve information, or perform actions based on user requests.
+
+## Overview
+
+Function calling provides a structured way for models to:
+- Request specific data from external sources
+- Take actions in your applications
+- Return structured data in predefined formats
+- Enhance capabilities beyond pure text generation
+
+## How It Works
+
+1. You define one or more functions in your API request
+2. The model determines when to call these functions based on user input
+3. The model generates a structured JSON payload conforming to your function schema
+4. Your application receives the function call request and executes the actual function
+5. You can then feed the function results back to the model for further processing
+
+## Basic Usage
+
+To use function calling, include a `tools` array in your request:
+
+```json
+{
+  "model": "openai/gpt-4o",
+  "messages": [
+    {"role": "user", "content": "What's the weather like in Paris today?"}
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get the current weather for a specific location",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The city and state, e.g., San Francisco, CA"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["celsius", "fahrenheit"],
+              "description": "The unit of temperature"
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    }
+  ]
+}
+```
+
+## Response Format
+
+When the model determines a function should be called, it will generate a response like this:
+
+```json
+{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1698155432,
+  "model": "openai/gpt-4o",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_abc123",
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "arguments": "{\"location\":\"Paris, France\",\"unit\":\"celsius\"}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 82,
+    "completion_tokens": 18,
+    "total_tokens": 100
+  }
+}
+```
+
+## Handling Function Calls
+
+After receiving a function call, your application should:
+
+1. Parse the function name and arguments
+2. Execute the appropriate function with those arguments
+3. Return the function result to the model
+
+Example of sending the function result back:
+
+```json
+{
+  "model": "openai/gpt-4o",
+  "messages": [
+    {"role": "user", "content": "What's the weather like in Paris today?"},
+    {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "call_abc123",
+          "type": "function",
+          "function": {
+            "name": "get_weather", 
+            "arguments": "{\"location\":\"Paris, France\",\"unit\":\"celsius\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_abc123",
+      "content": "{\"temperature\":22,\"unit\":\"celsius\",\"description\":\"Partly cloudy\",\"humidity\":45}"
+    }
+  ]
+}
+```
+
+## Multi-Function Support
+
+You can define multiple functions to give the model more options:
+
+```json
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get the current weather for a specific location",
+        "parameters": { /* ... */ }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_flights",
+        "description": "Search for available flights between two locations",
+        "parameters": { /* ... */ }
+      }
+    }
+  ]
+}
+```
+
+## Function Parameters Schema
+
+Function parameters use JSON Schema, allowing you to define:
+
+- Property types (string, number, boolean, array, object)
+- Required fields
+- Enumerated values
+- Nested objects
+- Arrays with specific formats
+- Default values
+
+Example of complex parameters:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "departure_airport": {
+      "type": "string",
+      "description": "The departure airport code"
+    },
+    "arrival_airport": {
+      "type": "string",
+      "description": "The arrival airport code"
+    },
+    "date": {
+      "type": "string",
+      "description": "Date in YYYY-MM-DD format"
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "max_stops": {
+          "type": "integer",
+          "description": "Maximum number of stops"
+        },
+        "class": {
+          "type": "string",
+          "enum": ["economy", "premium_economy", "business", "first"],
+          "description": "Preferred cabin class"
+        }
+      }
+    }
+  },
+  "required": ["departure_airport", "arrival_airport", "date"]
+}
+```
+
+## Best Practices
+
+### Function Design
+
+- **Clear Names**: Use descriptive function names like `get_weather` instead of generic ones like `api_call`
+- **Precise Descriptions**: Include detailed descriptions of what each function does
+- **Granular Functions**: Create specific functions rather than general-purpose ones
+- **Consistent Naming**: Use consistent naming patterns across related functions
+
+### Parameter Design
+
+- **Required Fields**: Only mark truly mandatory parameters as required
+- **Validation**: Use enum for parameters with fixed possible values
+- **Descriptions**: Provide clear descriptions for all parameters
+- **Default Values**: Consider what reasonable defaults would be
+
+### Error Handling
+
+- Validate function call arguments before executing functions
+- Handle and report errors when functions fail
+- Return meaningful error messages that the model can interpret
+- Consider implementing retry logic for transient failures
+
+## Model Support
+
+Different models have varying capabilities with function calling:
+
+| Provider | Model | Support Level | Notes |
+|----------|-------|---------------|-------|
+| OpenAI   | GPT-4o | Full Support | Most advanced function calling |
+| OpenAI   | GPT-3.5-turbo | Full Support | Good for simpler functions |
+| Anthropic | Claude 3 Opus | Full Support | Very accurate parameter generation |
+| Anthropic | Claude 3 Sonnet | Full Support | |
+| Anthropic | Claude 3 Haiku | Limited Support | Better for simpler functions |
+| Google | Gemini 1.5 Pro | Full Support | |
+
+## Common Use Cases
+
+- **External Data Retrieval**: Weather, stock prices, database queries
+- **Tool Automation**: Calendar scheduling, ticket creation, order placement
+- **Calculations**: Currency conversions, financial calculations
+- **Content Transformation**: Format conversion, translations with specific requirements
+- **API Integration**: Connecting to third-party services and platforms
+
+## Security Considerations
+
+- **Validate Inputs**: Always validate and sanitize function inputs
+- **Rate Limiting**: Implement rate limits to prevent excessive function calls
+- **Permissions**: Ensure functions have appropriate permission scopes
+- **Audit Logging**: Log all function calls for security audit purposes
+
+## Next Steps
+
+- [Explore Tool Use](/docs/api/tool-use) for more advanced AI-system interactions
+- [Learn about Vision & Images](/docs/api/vision) to enable visual capabilities
+- [Implement Error Handling](/docs/api/errors) for robust applications

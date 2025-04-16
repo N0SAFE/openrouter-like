@@ -1,0 +1,374 @@
+---
+title: Vision & Images
+description: How to work with images and visual content through the OpenRouter API
+---
+
+# Vision & Images API
+
+The Vision & Images API allows you to send images to compatible language models, enabling them to analyze, describe, and reason about visual content alongside text.
+
+## Overview
+
+With vision capabilities, AI models can:
+- Describe image content in detail
+- Answer questions about images
+- Extract text and data from images
+- Analyze charts, graphs, and diagrams
+- Compare multiple images
+- Process screenshots and UI elements
+
+## Supported Models
+
+Not all models support vision capabilities. Currently, these models provide vision support:
+
+| Provider | Model | Max Images | Resolution | Additional Info |
+|----------|-------|------------|------------|-----------------|
+| OpenAI   | GPT-4o | 20 | 16MP | Best overall quality |
+| OpenAI   | GPT-4 Vision | 10 | 8MP | Good detail recognition |
+| Anthropic | Claude 3 Opus | 20 | 16MP | Excellent reasoning about images |
+| Anthropic | Claude 3 Sonnet | 20 | 16MP | Good balance of performance/cost |
+| Anthropic | Claude 3 Haiku | 10 | 8MP | Fastest response time |
+| Google   | Gemini 1.5 Pro | 30 | 20MP | Highest resolution support |
+
+## Basic Usage
+
+To include images in your API request, use the message content array format, which allows mixing text and images:
+
+```json
+{
+  "model": "anthropic/claude-3-opus",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What's in this image?"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL...",
+            "detail": "high"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Image Input Formats
+
+### Base64 Encoding
+
+For direct image embedding, encode the image as a base64 string with the appropriate data URI prefix:
+
+```json
+{
+  "type": "image_url",
+  "image_url": {
+    "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...",
+    "detail": "high"
+  }
+}
+```
+
+### Remote URLs
+
+You can also reference images by URL:
+
+```json
+{
+  "type": "image_url",
+  "image_url": {
+    "url": "https://example.com/image.jpg",
+    "detail": "high"
+  }
+}
+```
+
+> **Note**: Remote URLs must be publicly accessible. The API cannot access images behind authentication.
+
+## Detail Levels
+
+The `detail` parameter controls the resolution at which the image is processed:
+
+- **high**: Processes the image at maximum supported resolution, ideal for text-heavy images, complex diagrams, or when fine details matter
+- **low**: Processes the image at a lower resolution, suitable for simple images or when bandwidth is a concern
+- **auto** (default): Let the model decide based on image content
+
+## Multi-Image Requests
+
+You can include multiple images in a single request:
+
+```json
+{
+  "model": "anthropic/claude-3-opus",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Compare these two product images and tell me the differences."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/product1.jpg"
+          }
+        },
+        {
+          "type": "text",
+          "text": "This is the first product."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/product2.jpg"
+          }
+        },
+        {
+          "type": "text",
+          "text": "This is the second product."
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Best Practices
+
+### Image Quality
+
+- Ensure images are clear and well-lit
+- Crop irrelevant parts of images to focus on the subject
+- Consider compression to reduce token usage while maintaining quality
+
+### Prompting for Vision
+
+- Be specific about what you want the model to focus on in the image
+- For complex images, consider directing attention to specific areas
+- When analyzing text in images, explicitly ask for transcription
+
+### Message Structure
+
+- Place relevant text close to the image reference
+- For multiple images, label them clearly in your text
+- Consider using numbered references when comparing multiple images
+
+## Example Use Cases
+
+### Image Description
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Describe this image in detail."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/scene.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Text Extraction
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Extract all text from this document image."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/document.jpg",
+            "detail": "high"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Visual QA
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "How many people are wearing red shirts in this image?"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/crowd.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Technical Analysis
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Explain what this chart shows and summarize the key trends."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/chart.png",
+            "detail": "high"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Pricing Considerations
+
+Vision features typically incur higher token costs than text-only requests:
+
+- Image tokens are counted based on size and detail level
+- Higher resolution images consume more tokens
+- Multiple images multiply token consumption
+- Models vary in how efficiently they process images
+
+## Limitations
+
+- Text recognition quality varies between models
+- Very small text may not be readable
+- Some models struggle with handwritten content
+- Complex diagrams may be partially misinterpreted
+- Image context is not persisted across separate API calls
+
+## Error Handling
+
+Common errors with vision requests:
+
+- **Invalid image format**: Ensure you're using supported formats (JPEG, PNG, GIF, WebP)
+- **File too large**: Check model-specific size limits
+- **URL access error**: Confirm URLs are publicly accessible
+- **Too many images**: Stay within model-specific image count limits
+
+## JavaScript Example
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  },
+  body: JSON.stringify({
+    model: 'anthropic/claude-3-opus',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: 'What's in this image?'
+          },
+          {
+            type: 'image_url',
+            image_url: {
+              url: 'https://example.com/image.jpg',
+              detail: 'high'
+            }
+          }
+        ]
+      }
+    ]
+  })
+});
+
+const result = await response.json();
+console.log(result.choices[0].message.content);
+```
+
+## Python Example
+
+```python
+import requests
+import json
+import base64
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+base64_image = encode_image("path/to/image.jpg")
+
+response = requests.post(
+    "https://api.openrouter.ai/v1/chat/completions",
+    headers={
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    },
+    json={
+        "model": "anthropic/claude-3-opus",
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "What's in this image?"
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}",
+                            "detail": "high"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+)
+
+print(json.loads(response.text)['choices'][0]['message']['content'])
+```
+
+## Next Steps
+
+- [Explore Rate Limits](/docs/api/rate-limits) to optimize image-heavy applications
+- [Combine with Function Calling](/docs/api/function-calling) for interactive visual applications
+- [Learn about Error Handling](/docs/api/errors) for robust applications
+- [See Vision Use Cases](/docs/use-cases/content-generation) for application ideas

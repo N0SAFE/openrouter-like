@@ -7,8 +7,8 @@ export function Header() {
   const isLoggedIn = false;
 
   return (
-    <header className="border-b border-border/40 bg-background sticky top-0 z-50">
-      <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+    <header className="border-b border-border/40 bg-background sticky top-0 z-50 left-0 right-0">
+      <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-xl font-bold">OpenRouter Clone</span>
@@ -37,7 +37,7 @@ export function Header() {
           ) : (
             <>
               <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+                <Link href="/signin">Sign In</Link>
               </Button>
               <Button asChild>
                 <Link href="/signup">Sign Up</Link>

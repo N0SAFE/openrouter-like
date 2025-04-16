@@ -1,0 +1,57 @@
+---
+title: Introduction
+description: Getting started with the OpenRouter API
+---
+
+# Introduction to OpenRouter
+
+Welcome to the OpenRouter API documentation. OpenRouter provides a unified API endpoint to access various AI language models from different providers, including OpenAI, Anthropic, Google, and open-source alternatives.
+
+## What is OpenRouter?
+
+OpenRouter is a unified gateway to the world's AI models. With a single API key and consistent interface, you can access models from different providers without managing multiple integrations.
+
+### Key Benefits
+
+- **Single API Integration** - Access all major AI models through one consistent API
+- **Automatic Fallbacks** - Configure fallbacks if your preferred model is unavailable
+- **Cost Optimization** - Choose models based on capability and cost efficiency
+- **Simple Authentication** - One API key for all model providers
+- **Compatible Format** - Maintain OpenAI-compatible formatting for easy migration
+
+## Getting Started
+
+To start using OpenRouter:
+
+1. Sign up for an account
+2. Generate an API key from your dashboard
+3. Make API requests using your key
+
+```bash
+curl https://api.openrouter.ai/v1/chat/completions \
+  -H "Authorization: Bearer $YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "anthropic/claude-3-opus",
+    "messages": [{"role": "user", "content": "Hello world!"}]
+  }'
+```
+
+## Supported Models
+
+OpenRouter supports models from the following providers:
+
+- **OpenAI**: GPT-4o, GPT-4 Turbo, GPT-3.5 Turbo
+- **Anthropic**: Claude 3 Opus, Claude 3 Sonnet, Claude 3 Haiku
+- **Google**: Gemini 1.5 Pro, Gemini 1.5 Flash
+- **Meta**: Llama 3 (70B, 8B)
+- **And more**: Additional open-source models
+
+Check the [Models](/docs/models) section for the complete list of available models.
+
+## Next Steps
+
+- [Get your API Keys](/docs/api-keys)
+- [Learn about API Authentication](/docs/api/authentication)
+- [See Chat Completion examples](/docs/api/chat-completion)
+- [Explore available Models](/docs/models)

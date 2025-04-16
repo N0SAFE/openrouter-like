@@ -1,0 +1,164 @@
+---
+title: Fallbacks & Routing
+description: Configure automatic fallbacks between models
+---
+
+# Fallbacks & Routing
+
+Fallbacks and routing allow you to create more reliable applications by automatically switching to alternative models when your primary choice is unavailable or unresponsive.
+
+## Why Use Fallbacks?
+
+Model providers may experience:
+- Temporary outages
+- Rate limiting
+- Capacity issues during peak demand
+- Model deprecations
+
+By implementing fallbacks, your application can continue to function even when these issues occur.
+
+## Basic Fallback Configuration
+
+OpenRouter supports automatic fallbacks through the `route` parameter:
+
+```json
+{
+  "route": "fallback",
+  "model": "anthropic/claude-3-opus",
+  "fallbacks": ["openai/gpt-4o", "google/gemini-1.5-pro"],
+  "messages": [
+    {"role": "user", "content": "Summarize the main themes in Hamlet."}
+  ]
+}
+```
+
+In this example:
+1. OpenRouter will first try `anthropic/claude-3-opus`
+2. If unavailable, it will try `openai/gpt-4o`
+3. If that also fails, it will try `google/gemini-1.5-pro`
+
+## Advanced Routing Strategies
+
+### Timeout-Based Fallbacks
+
+You can specify timeouts for each model:
+
+```json
+{
+  "route": "fallback",
+  "model": "anthropic/claude-3-opus",
+  "fallbacks": ["openai/gpt-4o", "google/gemini-1.5-pro"],
+  "timeout": 5000,  // 5 seconds in milliseconds
+  "messages": [
+    {"role": "user", "content": "Explain quantum computing."}
+  ]
+}
+```
+
+If the primary model doesn't respond within the timeout period, OpenRouter will automatically try the next model in the fallback list.
+
+### Cost-Optimized Routing
+
+You can also configure routing to prioritize cost efficiency:
+
+```json
+{
+  "route": "lowest-cost",
+  "models": [
+    "anthropic/claude-3-opus",
+    "openai/gpt-4o",
+    "google/gemini-1.5-pro",
+    "anthropic/claude-3-haiku"
+  ],
+  "messages": [
+    {"role": "user", "content": "Generate a list of 10 creative business names for a pet grooming service."}
+  ]
+}
+```
+
+With `"route": "lowest-cost"`, OpenRouter will select the most affordable option from the provided list that is currently available.
+
+### Performance-Optimized Routing
+
+For latency-sensitive applications, use performance routing:
+
+```json
+{
+  "route": "fastest",
+  "models": [
+    "anthropic/claude-3-opus", 
+    "openai/gpt-4o", 
+    "anthropic/claude-3-haiku"
+  ],
+  "messages": [
+    {"role": "user", "content": "Quick response needed: What's the capital of France?"}
+  ]
+}
+```
+
+With `"route": "fastest"`, OpenRouter will select the model with the lowest current latency from your specified list.
+
+## Implementing Fallbacks in Your Code
+
+### JavaScript Example
+
+```javascript
+const response = await fetch('https://api.openrouter.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    route: 'fallback',
+    model: 'anthropic/claude-3-opus',
+    fallbacks: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+    messages: [
+      {role: 'user', content: 'Explain how neural networks work.'}
+    ]
+  })
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);
+```
+
+### Python Example
+
+```python
+import requests
+import os
+
+response = requests.post(
+    'https://api.openrouter.ai/v1/chat/completions',
+    headers={
+        'Authorization': f"Bearer {os.environ['OPENROUTER_API_KEY']}",
+        'Content-Type': 'application/json'
+    },
+    json={
+        'route': 'fallback',
+        'model': 'anthropic/claude-3-opus',
+        'fallbacks': ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+        'messages': [
+            {'role': 'user', 'content': 'Explain how neural networks work.'}
+        ]
+    }
+)
+
+print(response.json()['choices'][0]['message']['content'])
+```
+
+## Best Practices for Fallbacks
+
+1. **Model Compatibility**: Choose fallback models with similar capabilities to your primary model
+2. **Response Consistency**: Be aware that different models may produce different response styles
+3. **Cost Management**: Consider the cost implications of your fallback choices
+4. **Timeout Settings**: Set reasonable timeouts based on your application's requirements
+5. **Monitor Usage**: Keep track of which fallback models are being used to identify recurring issues
+6. **Testing**: Test your fallback configuration to ensure it works as expected
+
+## Next Steps
+
+- Explore the [API Reference](/docs/api) for more details on routing options
+- Learn about [model selection](/docs/guides/model-selection) to choose appropriate models for your use case
+- Check out our guide on [prompt engineering](/docs/guides/prompt-engineering) to optimize results across models

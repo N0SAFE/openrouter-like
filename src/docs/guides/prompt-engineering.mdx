@@ -1,0 +1,138 @@
+---
+title: Prompt Engineering
+description: Techniques for crafting effective prompts
+---
+
+# Prompt Engineering
+
+Prompt engineering is the art of creating effective prompts to get the best results from AI language models. This guide will help you craft better prompts for use with the OpenRouter API.
+
+## Basic Prompting Techniques
+
+### Be Clear and Specific
+
+The more specific your prompt, the better the model can understand what you want. Compare:
+
+❌ **Vague**: "Tell me about climate change."  
+✅ **Specific**: "Explain three main causes of climate change and their environmental impacts, with scientific evidence."
+
+### Set the Context
+
+Provide relevant background information to give the model context:
+
+```
+You are an expert in corporate finance explaining concepts to MBA students.
+Please explain the concept of discounted cash flow (DCF) valuation, its components,
+and when it's most appropriate to use compared to other valuation methods.
+```
+
+### Define the Output Format
+
+Specify how you want the response structured:
+
+```
+Please analyze this company's quarterly results in a structured format:
+1. Revenue analysis (growth YoY, key drivers)
+2. Profitability metrics (margins, EBITDA changes)
+3. Cash flow highlights
+4. Forward guidance implications
+```
+
+## Advanced Techniques
+
+### System Messages
+
+Most models support system messages to set the tone, style, and behavior:
+
+```json
+{
+  "model": "anthropic/claude-3-opus",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a technical documentation writer who explains complex concepts in simple terms. Use analogies and examples. Keep explanations concise."
+    },
+    {
+      "role": "user",
+      "content": "Explain how blockchain works"
+    }
+  ]
+}
+```
+
+### Few-Shot Learning
+
+Provide examples of the desired input-output pattern:
+
+```
+Convert these statements to French:
+
+English: "The weather is nice today."
+French: "Le temps est beau aujourd'hui."
+
+English: "I would like to order dinner."
+French: "Je voudrais commander le dîner."
+
+English: "Can you help me find the train station?"
+French:
+```
+
+### Chain-of-Thought Prompting
+
+Encourage the model to think step-by-step for complex reasoning tasks:
+
+```
+Solve this math problem, showing your work step-by-step:
+
+If a store is offering a 25% discount on an item that originally costs $480, and then takes an
+additional 10% off the discounted price during a special sale, what is the final price of the item?
+```
+
+## Model-Specific Considerations
+
+Different models have different capabilities and optimal prompting techniques:
+
+### OpenAI Models (GPT-4, GPT-3.5)
+
+- Respond well to detailed instructions
+- Support system messages effectively
+- Can benefit from JSON mode for structured outputs
+
+### Claude Models
+
+- Excel with detailed context and instructions
+- Respond well to role-based prompts
+- Good at following specific formatting instructions
+
+### Gemini Models
+
+- Work well with multimodal prompts (text + images)
+- Benefit from clear step-by-step instructions
+- May need more explicit formatting guidance
+
+## Common Pitfalls to Avoid
+
+- **Ambiguous Instructions**: Avoid vague terms that could be interpreted in multiple ways.
+- **Contradictory Requirements**: Check that your instructions don't contain contradicting elements.
+- **Excessive Constraints**: Too many requirements might lead to lower quality responses.
+- **Unnecessary Verbosity**: Being unnecessarily wordy can dilute the core instruction.
+
+## Testing and Iteration
+
+Prompt engineering is an iterative process:
+
+1. Start with a basic prompt
+2. Test the response
+3. Identify issues or areas for improvement
+4. Refine the prompt
+5. Repeat until satisfied
+
+Consider creating a test set of prompts to systematically evaluate and improve your prompting strategy.
+
+## Resources
+
+- [OpenAI Cookbook](https://cookbook.openai.com/)
+- [Anthropic's Claude Prompt Engineering Guide](https://docs.anthropic.com/claude/docs/introduction-to-prompt-design)
+- [Google's Gemini Prompt Design](https://ai.google.dev/docs/prompt-best-practices)
+
+Remember that different use cases require different prompting strategies. Experiment to find what works best for your specific application.

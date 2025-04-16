@@ -1,0 +1,141 @@
+---
+title: Model Selection
+description: How to choose the right model for your use case
+---
+
+# Model Selection Guide
+
+Choosing the right AI model is crucial for getting optimal results while managing costs effectively. This guide will help you understand how to select the most appropriate model for your specific use case.
+
+## Understanding Model Capabilities
+
+Different models excel in different areas:
+
+### Text Generation & Conversations
+- **Top tier**: `anthropic/claude-3-opus`, `openai/gpt-4o`
+- **Strong performers**: `anthropic/claude-3-sonnet`, `openai/gpt-4-turbo`
+- **Cost-effective options**: `openai/gpt-3.5-turbo`, `anthropic/claude-3-haiku`
+
+### Creative Content
+- **Best for creative writing**: `openai/gpt-4o`, `anthropic/claude-3-opus`
+- **Good balance**: `anthropic/claude-3-sonnet`, `meta-llama/llama-3-70b-instruct`
+
+### Factual Knowledge
+- **Most comprehensive**: `anthropic/claude-3-opus`, `openai/gpt-4o`
+- **Strong alternatives**: `google/gemini-1.5-pro`
+
+### Code Generation
+- **Best performance**: `openai/gpt-4o`, `anthropic/claude-3-opus`
+- **Good alternatives**: `anthropic/claude-3-sonnet`, `openai/gpt-3.5-turbo`
+- **Open-source options**: `meta-llama/llama-3-70b-instruct`
+
+## Key Selection Criteria
+
+### 1. Task Complexity
+
+Match the model's capabilities to your task requirements:
+
+| Task Complexity | Recommended Models |
+|-----------------|-------------------|
+| Simple queries, basic chat | `anthropic/claude-3-haiku`, `openai/gpt-3.5-turbo` |
+| Creative writing, content generation | `anthropic/claude-3-sonnet`, `openai/gpt-4-turbo` |
+| Advanced reasoning, complex tasks | `anthropic/claude-3-opus`, `openai/gpt-4o` |
+| Technical or specialized domains | `openai/gpt-4o`, `anthropic/claude-3-opus` |
+
+### 2. Response Quality vs. Cost
+
+Consider the balance between quality and cost:
+
+| Model | Relative Quality | Relative Cost | Best For |
+|-------|-----------------|--------------|----------|
+| `anthropic/claude-3-opus` | Highest | Highest | Critical applications where quality is paramount |
+| `openai/gpt-4o` | Highest | High | Multimodal tasks and top-tier performance |
+| `anthropic/claude-3-sonnet` | High | Medium | Good balance of quality and cost |
+| `google/gemini-1.5-pro` | High | Medium | Strong general performance |
+| `openai/gpt-3.5-turbo` | Medium | Low | High volume, cost-sensitive applications |
+| `anthropic/claude-3-haiku` | Medium | Low | Quick responses, simple tasks |
+| `meta-llama/llama-3-70b-instruct` | Medium-High | Low | Open source alternative with good performance |
+
+### 3. Context Length Requirements
+
+Different models support different context lengths (input + output tokens):
+
+| Model | Max Context Length | Good For |
+|-------|-------------------|----------|
+| `google/gemini-1.5-pro` | 1M tokens | Very long documents, extensive analysis |
+| `anthropic/claude-3-opus` | 200K tokens | Long-form content, document analysis |
+| `anthropic/claude-3-sonnet` | 200K tokens | Detailed conversations, document processing |
+| `openai/gpt-4o` | 128K tokens | Extended conversations, document analysis |
+| `meta-llama/llama-3-70b-instruct` | 8K tokens | Standard conversations, shorter tasks |
+| `openai/gpt-3.5-turbo` | 16K tokens | Medium-length conversations |
+
+### 4. Latency Requirements
+
+If response time is critical:
+
+- **Fastest responses**: `anthropic/claude-3-haiku`, `openai/gpt-3.5-turbo`
+- **Balanced performance**: `anthropic/claude-3-sonnet`, `openai/gpt-4-turbo`
+- **Highest quality but slower**: `anthropic/claude-3-opus`, `openai/gpt-4o`
+
+## Implementation Examples
+
+### Selecting Models Based on Task
+
+```javascript
+// Choose model based on task complexity
+function selectModelForTask(taskType, importanceLevel) {
+  // High importance tasks get premium models
+  if (importanceLevel === 'high') {
+    return 'anthropic/claude-3-opus';
+  }
+  
+  // Match model to specific task types
+  switch(taskType) {
+    case 'creative-writing':
+      return 'anthropic/claude-3-sonnet';
+    case 'coding':
+      return 'openai/gpt-4o';
+    case 'customer-support':
+      return 'anthropic/claude-3-haiku';
+    case 'data-analysis':
+      return 'google/gemini-1.5-pro';
+    default:
+      // Default to balanced option
+      return 'openai/gpt-4-turbo';
+  }
+}
+```
+
+### Dynamic Selection Based on Input Length
+
+```javascript
+function selectModelByInputLength(inputText) {
+  const tokenEstimate = estimateTokenCount(inputText);
+  
+  if (tokenEstimate > 100000) {
+    return 'google/gemini-1.5-pro';
+  } else if (tokenEstimate > 30000) {
+    return 'anthropic/claude-3-opus';
+  } else if (tokenEstimate > 8000) {
+    return 'openai/gpt-4o';
+  } else {
+    return 'anthropic/claude-3-haiku';
+  }
+}
+```
+
+## Testing and Optimization
+
+For mission-critical applications, it's worth conducting model comparisons:
+
+1. **Create a benchmark test set** representing your typical use cases
+2. **Test multiple models** on this dataset
+3. **Evaluate based on relevant metrics** (accuracy, creativity, etc.)
+4. **Consider A/B testing** in production environments
+5. **Monitor performance and cost** over time
+
+## Next Steps
+
+- Visit our [Models reference](/docs/models) for detailed information about each model
+- Learn about [Fallbacks & Routing](/docs/guides/fallbacks-routing) to implement automatic model selection
+- Explore [Prompt Engineering](/docs/guides/prompt-engineering) to optimize your prompts for each model

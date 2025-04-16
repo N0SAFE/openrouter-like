@@ -1,0 +1,106 @@
+---
+title: Platform Overview
+description: Understanding the OpenRouter platform architecture and capabilities
+---
+
+# Platform Overview
+
+This guide provides a comprehensive overview of the OpenRouter platform architecture, features, and capabilities.
+
+## Platform Architecture
+
+OpenRouter acts as a unified gateway to multiple AI model providers:
+
+1. **API Gateway Layer** - Handles authentication, request routing, and load balancing
+2. **Model Abstraction Layer** - Normalizes requests across different providers
+3. **Provider Integration Layer** - Manages connections to individual model providers
+4. **Monitoring & Analytics Layer** - Tracks usage, performance, and costs
+
+```
+┌───────────────────┐
+│   Your Application │
+└─────────┬─────────┘
+          │
+┌─────────▼─────────┐
+│    OpenRouter API  │
+└─────────┬─────────┘
+          │
+┌─────────▼─────────┐
+│  Model Abstraction │
+└─────────┬─────────┘
+          │
+┌─────────▼─────────┐
+│ Provider Integrations
+└─────────┬─────────┘
+          │
+┌─────────▼─────────┐
+│  Model Providers   │
+└───────────────────┘
+```
+
+## Core Capabilities
+
+### Unified API
+
+Access all major AI models through a single, consistent API endpoint:
+
+- Common request/response format across all providers
+- Single API key for all services
+- Consistent error handling
+
+### Smart Routing
+
+OpenRouter intelligently routes requests based on your preferences:
+
+- **Fallback Routing** - Automatically use backup models if primary is unavailable
+- **Cost Optimization** - Route to the most cost-effective model that meets requirements
+- **Performance Routing** - Select the lowest-latency model for time-sensitive applications
+- **Custom Routing Rules** - Define your own routing logic based on use case
+
+### Request Transformation
+
+OpenRouter handles the conversion between different provider APIs:
+
+- Automatically formats requests for each provider's requirements
+- Normalizes responses into a consistent format
+- Handles provider-specific parameters and features
+
+### Analytics & Monitoring
+
+Comprehensive tracking of your AI usage:
+
+- Per-model usage statistics
+- Cost tracking and optimization suggestions
+- Performance metrics
+- Error rate monitoring
+
+## Global Infrastructure
+
+OpenRouter operates globally with:
+
+- **Multi-Region Deployment** - Low latency access worldwide
+- **High Availability Design** - 99.9% uptime SLA on paid plans
+- **Scalable Architecture** - Handles high-volume traffic
+- **Edge Caching** - Optimizes response times for common requests
+
+## Security Features
+
+- **TLS Encryption** - All API traffic encrypted in transit
+- **API Key Rotation** - Regular key rotation supported
+- **Usage Limits** - Set maximum usage per key
+- **Access Controls** - Team-based permissions
+- **Compliance** - SOC 2 compliant (enterprise plans)
+
+## Integration Options
+
+- **REST API** - Standard HTTP API for all languages
+- **SDKs** - Purpose-built libraries for popular languages
+- **Webhooks** - Event-driven integration for specific scenarios
+- **Custom Endpoints** - Enterprise-level custom integration points
+
+## Next Steps
+
+- [Learn about account setup](/docs/account-setup)
+- [Understand billing and usage](/docs/billing-usage)
+- [Explore the API reference](/docs/api)
+- [View available models](/docs/models)

@@ -1,0 +1,67 @@
+---
+title: API Keys
+description: How to obtain and use OpenRouter API keys
+---
+
+# API Keys
+
+API keys are required to authenticate with the OpenRouter API. Each API key is unique to your account and gives you access to all supported models.
+
+## Getting Your API Key
+
+To obtain an API key:
+
+1. **Create an account** on the [OpenRouter platform](https://openrouter.ai)
+2. **Navigate to the API Keys** section in your dashboard
+3. **Create a new API key** by clicking the "Create API Key" button
+4. **Name your key** with a memorable description (e.g., "Development", "Production")
+5. **Copy your API key** immediately - for security reasons, it will only be shown once
+
+## API Key Security
+
+Your API keys carry significant privileges, so be sure to keep them secure:
+
+- **Never share your API keys** in publicly accessible areas such as GitHub, client-side code, or social media
+- **Use environment variables** to store API keys in your applications
+- **Create separate API keys** for different applications or environments
+- **Rotate your API keys** periodically, especially after team member changes
+
+## Using Your API Key
+
+Include your API key in all requests to the OpenRouter API as a Bearer token in the Authorization header:
+
+```bash
+curl https://api.openrouter.ai/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "anthropic/claude-3-opus",
+    "messages": [
+      {"role": "user", "content": "Hello, how are you?"}
+    ]
+  }'
+```
+
+## API Key Quota and Limits
+
+Each API key has usage limits based on your subscription plan:
+
+- **Free tier** users have a limited number of tokens per month
+- **Paid plans** offer higher quotas and priority access to models
+- **Rate limits** apply to prevent abuse (see [API reference](/docs/api) for details)
+
+You can monitor your API key usage in the OpenRouter dashboard.
+
+## Regenerating API Keys
+
+If you believe your API key has been compromised:
+
+1. **Immediately create a new key** in your dashboard
+2. **Update all your applications** with the new key
+3. **Delete the compromised key** to prevent unauthorized usage
+
+## Next Steps
+
+- [Learn about API Authentication](/docs/api/authentication)
+- [Try your first API request](/docs/quick-start)
+- [Explore available models](/docs/models)

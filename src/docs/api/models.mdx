@@ -1,0 +1,108 @@
+---
+title: Models API
+description: List and query available AI models through the OpenRouter API
+---
+
+# Models API
+
+The Models API allows you to retrieve information about models available through OpenRouter.
+
+## List Models
+
+Retrieve a list of all available AI models.
+
+### Endpoint
+
+```
+GET https://api.openrouter.ai/v1/models
+```
+
+### Example Request
+
+```bash
+curl https://api.openrouter.ai/v1/models \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "HTTP-Referer: https://your-app.com"
+```
+
+### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "anthropic/claude-3-opus",
+      "object": "model",
+      "created": 1698177600,
+      "owned_by": "anthropic",
+      "permission": [],
+      "root": "claude-3-opus",
+      "parent": null,
+      "context_length": 200000,
+      "pricing": {
+        "prompt": 15,
+        "completion": 75
+      }
+    },
+    {
+      "id": "openai/gpt-4o",
+      "object": "model",
+      "created": 1699374000,
+      "owned_by": "openai",
+      "permission": [],
+      "root": "gpt-4o",
+      "parent": null,
+      "context_length": 128000,
+      "pricing": {
+        "prompt": 5,
+        "completion": 15
+      }
+    }
+    // Additional models...
+  ],
+  "object": "list"
+}
+```
+
+## Model Availability
+
+Model availability can change based on load and provider status. OpenRouter handles this with:
+
+1. **Automatic Fallbacks**: Configure fallback models if your primary choice is unavailable
+2. **Model Status**: Check current availability in the models endpoint response
+3. **Model Rotation**: For high-demand applications, consider implementing model rotation
+
+## Model Pricing
+
+Each model has associated pricing information in the `pricing` field:
+
+- `prompt`: Cost per 1,000 input tokens (in USD × 1000)
+- `completion`: Cost per 1,000 output tokens (in USD × 1000)
+
+For example, if `prompt` is 5, you pay $0.005 per 1,000 input tokens.
+
+## Model Context Lengths
+
+The `context_length` field indicates the maximum number of tokens the model can process in a single request (combined prompt and completion).
+
+## Model Performance
+
+Performance varies across models:
+
+1. **Latency**: Response time can vary by model and current load
+2. **Quality**: More advanced models typically produce higher quality responses
+3. **Specialization**: Some models perform better on specific tasks
+
+## Model Parameters
+
+When using models through the Chat Completion API, each model may support different parameters:
+
+- All models support basic parameters (temperature, max_tokens)
+- Advanced features like function calling are only available on supporting models
+- Check the [Chat Completion API](/docs/api/chat-completion) documentation for details
+
+## Next Steps
+
+- [Using the Chat Completion API](/docs/api/chat-completion)
+- [Error handling](/docs/api/errors)
+- [Learn about available models](/docs/models)

@@ -1,0 +1,133 @@
+---
+title: Deployment Overview
+description: Learn how to deploy and scale OpenRouter in production environments
+---
+
+# Deployment
+
+This section provides comprehensive guidance on deploying OpenRouter in production environments, ensuring scalability, reliability, and performance.
+
+## Deployment Options
+
+OpenRouter offers multiple deployment options to match your infrastructure needs:
+
+- **Cloud API** - Standard cloud-hosted API with global distribution
+- **Private Cloud** - Dedicated resources in our secure cloud environment
+- **On-Premises** - Deploy within your own infrastructure for maximum control
+- **Hybrid** - Combine cloud and on-premises deployments for optimal balance
+
+## Production Readiness
+
+Before deploying OpenRouter in a production environment, you should:
+
+1. **Define SLAs** - Establish your requirements for uptime, latency, and throughput
+2. **Plan capacity** - Determine expected usage patterns and capacity requirements
+3. **Implement monitoring** - Set up appropriate monitoring and alerting
+4. **Design for resilience** - Prepare fallback strategies and error handling
+5. **Optimize cost** - Implement cost management strategies
+6. **Security review** - Conduct a security assessment of your integration
+
+For detailed guidance, see the [Production Readiness](/docs/deployment/production) documentation.
+
+## Deployment Architecture
+
+A typical OpenRouter deployment consists of several components:
+
+```
+┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+│  Your        │       │  OpenRouter  │       │  Model       │
+│  Application │ ───── │  API Layer   │ ───── │  Providers   │
+└──────────────┘       └──────────────┘       └──────────────┘
+                              │
+                      ┌───────┴───────┐
+                      │ Monitoring &  │
+                      │ Management    │
+                      └───────────────┘
+```
+
+### Component Considerations
+
+| Component | Considerations |
+|-----------|---------------|
+| API Layer | Load balancing, rate limiting, caching |
+| Authentication | Key management, rotation, permissions |
+| Monitoring | Metrics collection, alerting, logging |
+| Cost Management | Usage tracking, budgeting, optimization |
+
+## Scaling Strategies
+
+OpenRouter can be scaled in several ways:
+
+- **Horizontal scaling** - Distribute load across multiple instances
+- **Regional deployment** - Deploy in multiple geographic regions
+- **Load distribution** - Balance requests across model providers
+- **Caching** - Reduce redundant requests with response caching
+- **Asynchronous processing** - Decouple request handling from processing
+
+For detailed guidance, see the [Scalability](/docs/deployment/scalability) documentation.
+
+## High Availability
+
+To achieve high availability with OpenRouter:
+
+1. **Multi-region deployment** - Deploy across multiple geographic regions
+2. **Redundant model access** - Configure multiple model providers
+3. **Automatic failover** - Implement fallback strategies
+4. **Health checking** - Regular monitoring of API and model availability
+5. **Circuit breaking** - Automatically bypass unavailable resources
+
+For detailed guidance, see the [High Availability](/docs/deployment/high-availability) documentation.
+
+## Deployment Environments
+
+### Multi-Region Deployment
+
+For global applications, deploying OpenRouter across multiple regions improves:
+- Latency by serving requests from the closest region
+- Reliability through geographic redundancy
+- Compliance with data residency requirements
+
+For detailed guidance, see the [Multi-Region](/docs/deployment/multi-region) documentation.
+
+### Private Cloud
+
+Private cloud deployments offer:
+- Enhanced security and isolation
+- Dedicated resources with guaranteed capacity
+- Custom configuration options
+- Compliance with enterprise security policies
+
+For detailed guidance, see the [Private Cloud](/docs/deployment/private-cloud) documentation.
+
+### On-Premises
+
+On-premises deployments provide:
+- Maximum control over the infrastructure
+- Data sovereignty and compliance
+- Integration with existing security policies
+- Offline operation capabilities
+
+For detailed guidance, see the [On-Premises](/docs/deployment/on-premises) documentation.
+
+## Deployment Checklist
+
+- [ ] Determine deployment strategy based on requirements
+- [ ] Set up monitoring and alerting
+- [ ] Configure authentication and security measures
+- [ ] Implement cost management controls
+- [ ] Plan scaling strategy
+- [ ] Establish operational procedures
+- [ ] Configure backup and disaster recovery
+- [ ] Conduct load testing
+- [ ] Document deployment architecture
+
+## Next Steps
+
+Choose the deployment option that best fits your requirements and explore the detailed documentation:
+
+- [Production Readiness](/docs/deployment/production)
+- [Scalability](/docs/deployment/scalability)
+- [High Availability](/docs/deployment/high-availability)
+- [Multi-Region](/docs/deployment/multi-region)
+- [Private Cloud](/docs/deployment/private-cloud)
+- [On-Premises](/docs/deployment/on-premises)

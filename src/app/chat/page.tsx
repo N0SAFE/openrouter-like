@@ -105,8 +105,6 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
       <div className="flex flex-1 overflow-hidden">
         <ModelSidebar selectedModel={selectedModel} onSelectModel={handleSelectModel} />
         <main className="flex-1 overflow-hidden flex flex-col">
@@ -196,6 +194,5 @@ export default function ChatPage() {
           </Tabs>
         </main>
       </div>
-    </div>
   );
 }

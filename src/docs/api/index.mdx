@@ -1,0 +1,75 @@
+---
+title: API Reference
+description: Overview of the OpenRouter API endpoints and features
+---
+
+# API Reference
+
+OpenRouter provides a unified API that lets you access models from OpenAI, Anthropic, Google, and other providers through a single integration. Our API is designed to be compatible with OpenAI's API format while adding more capabilities.
+
+## Base URL
+
+All API requests should be made to the following base URL:
+
+```
+https://api.openrouter.ai/v1
+```
+
+## API Endpoints
+
+OpenRouter offers the following main endpoints:
+
+| Endpoint | Description |
+|----------|-------------|
+| [`/chat/completions`](/docs/api/chat-completion) | Generate conversational responses from AI models |
+| [`/models`](/docs/api/models) | List and get information about available models |
+
+## Authentication
+
+All API requests require authentication using an API key. Learn more in the [Authentication](/docs/api/authentication) section.
+
+## Response Format
+
+Responses follow a consistent format based on the OpenAI API standard, with additions specific to OpenRouter:
+
+```json
+{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1677858242,
+  "model": "anthropic/claude-3-opus",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "The generated response..."
+      },
+      "finish_reason": "stop",
+      "index": 0
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 42,
+    "total_tokens": 67
+  },
+  "openrouter": {
+    "provider": "anthropic"
+  }
+}
+```
+
+## Error Handling
+
+The API returns appropriate HTTP status codes and error messages when requests fail. Learn more in the [Error Handling](/docs/api/errors) section.
+
+## Rate Limits
+
+Rate limits vary based on your subscription plan and the specific models you're using. These limits are designed to ensure fair usage of the platform. Check your dashboard for current rate limits.
+
+## Next Steps
+
+- [API Authentication](/docs/api/authentication)
+- [Chat Completion API](/docs/api/chat-completion)
+- [Models API](/docs/api/models)
+- [Error Handling](/docs/api/errors)
